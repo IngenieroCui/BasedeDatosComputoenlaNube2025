@@ -12,7 +12,7 @@ db.createCollection("Empleado")
 show collections
 
 ## Insertar un documento
-json
+```json
 db.coleccion.insertOne(
     {
         nombre: 'Estefany',
@@ -21,10 +21,10 @@ db.coleccion.insertOne(
         ciudad: 'Huehuetoca'
     }
 )
-
+```
 
 ## Inserción de un documento más complejo con array
-json
+```json
 db.alumnos.insertOne(
  {
    nombre: "Martha",
@@ -36,10 +36,10 @@ db.alumnos.insertOne(
               ]
  }
  )
- 
+ ```
 
  ## Inserción de documentos más complejos con documentos anidados
- json
+```json
 db.alumnos.insertOne(
  {
     nombre: "Naomi",
@@ -74,7 +74,7 @@ db.alumnos.insertOne(
         }
 }
 )
-
+```
 # Practica1
 
 ## Cargar Datos
@@ -308,3 +308,58 @@ db.libros.find({},{titulo:1, _id:0, editorial:1})
 ```json
 db.libros.find({editorial: 'Planeta'},{titulo:1, _id:0, editorial:1})
 ```
+
+## Operador exists (Permite saber si un campo se encuentra o no en un documento)
+
+#### Mostrar todos los documentos que no contengan el campo cantidad
+
+```json
+db.libros.insertOne({_id:10, titulo:'Mongo en entornos graficos', editorial: 'terra', precio: 125})
+
+db.libros.find({cantidad: {$exists: false}})
+```
+
+## Operador type (Permite preguntar si un determinado campo corresponde con un tipo)
+
+[Operador Type](https://www.mongodb.com/docs/manual/reference/operator/query/type/#mongodb-query-op.-type)
+
+1.Mostrar todos los documentos donde el precio sean de tipo double
+
+```json
+db.libros.insertOne({_id:11, titulo:"IA", editorial: "terra", precio: 125.4, cantidad: 20})
+db.libros.find({precio: {$type: 1}})
+[
+  {
+    _id: 11,
+    titulo: 'IA',
+    editorial: 'terra',
+    precio: 125.4,
+    cantidad: 20
+  }
+]
+```
+
+2. Seleccionar los documentos donde el editorial sea de tipo entero
+
+```json
+db.libros.find({editorial:{$type: 'int'}})
+db.libros.find({editorial:{$type: 16}})
+```
+
+3. Seleccionar todos los documentos donde el editorial sea string
+
+```json
+db.libros.find({editorial:{$type: 'string'}})
+db.libros.find({editorial:{$type: 2}})
+```
+
+## Practica de consultas
+
+1. Instalar las tools de mongodb
+[DatabaseTools](https://www.mongodb.com/try/download/database-tools)
+
+2. Cargar el json empleados (debemos estar ubicados en la carpeta donde se encuentra el JSON empleados)
+
+En local: 
+comando: 
+  mongoimport --db curso --collections 
