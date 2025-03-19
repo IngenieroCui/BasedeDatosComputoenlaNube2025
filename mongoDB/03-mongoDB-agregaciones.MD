@@ -271,4 +271,76 @@ Nota: Debe ser el ultimo en la agregacion
 ]
 ```
 
-$cond. Devuelve valores segun una condicion (Es parecido al operador ternario condicion ? b : c)
+# $cond. Devuelve valores segun una condicion (Es parecido al operador ternario condicion ? b : c)
+
+```json
+{
+  _id: 0,
+  price: 1,
+  caro: {
+    $cond: [
+      {
+      	$gt: ["$price", 300]
+      }, "Si", "No"
+  	]
+  },
+  medio: {
+    $cond: [
+      {
+        $and:[
+          {$gt: ["$price", 100]},
+          {$lte: ["$price", 300]}
+        ]
+      },
+      "Si",
+      "No"
+    ]
+  },
+  barato: {
+    $cond: [
+      {$lte: ["$price", 100]}, "Si", "No"
+    ]
+  }
+}
+```
+# Crear vistas
+
+```json
+db.createView("ganancias_libros", "libros",
+[
+  {
+    $match:
+
+      {
+        editorial: "Biblio"
+      }
+  },
+  {
+    $project:
+      {
+        _id: 0,
+        titulo: 1,
+        precio: 1,
+        cantidad: 1,
+        nombreEditorial: "$editorial",
+        totalGanancias: {
+          $multiply: ["$precio", "$cantidad"]
+        }
+      }
+  },
+  {
+    $sort:
+      {
+        precio: -1
+      }
+  }
+])
+
+```
+
+## Consultar vistas
+
+```json
+db.ganancias_libros.find({totalGanancias: {$lte: 200}}, {titulo:1, totalGanancias:1}).sort({titulo: 1})
+en caso de que existan espacios en totalGanancias seria tipo "total de ganancias".
+```
